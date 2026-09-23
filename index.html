@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Relay</title>
+<style>
+  :root{
+    --bg:#0e1013;
+    --panel:#15181d;
+    --line:#262b32;
+    --text:#e8e9ec;
+    --sub:#8a919c;
+    --accent:#7c8cff;
+    --accent-dim:#4b52a8;
+    --danger:#ff5c5c;
+    --mono:'JetBrains Mono','Courier New',monospace;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    min-height:100vh;
+    background:
+      radial-gradient(circle at 15% 0%, #1a1e26 0%, transparent 45%),
+      var(--bg);
+    color:var(--text);
+    font-family:'Segoe UI',-apple-system,sans-serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding:48px 20px 80px;
+  }
+  .wrap{width:100%;max-width:560px;}
+
+  header{margin-bottom:36px;}
+  .kicker{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--accent);
+    letter-spacing:.04em;
+  }
+  h1{
+    margin:6px 0 0;
+    font-size:28px;
+    font-weight:600;
+    letter-spacing:-0.01em;
+  }
+
+  /* Webhook bar */
+  .field-label{
+    font-size:13px;
+    color:var(--sub);
+    margin:0 0 8px 2px;
+  }
+  .webhook-bar{
+    display:flex;
+    align-items:center;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:10px;
+    padding:4px 4px 4px 16px;
+    transition:border-color .15s ease;
+  }
+  .webhook-bar:focus-within{
+    border-color:var(--accent-dim);
+  }
+  .webhook-bar input{
+    flex:1;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--text);
+    font-family:var(--mono);
+    font-size:13px;
+    padding:12px 8px;
+  }
+  .webhook-bar input::placeholder{color:#4a4f58;}
+  .dot{
+    width:8px;height:8px;border-radius:50%;
+    background:#3a3f48;
+    flex-shrink:0;
+    transition:background .2s ease, box-shadow .2s ease;
+  }
+  .dot.live{
+    background:#6ee7a8;
+    box-shadow:0 0 8px #6ee7a888;
+  }
+
+  /* Message panel */
+  .panel{
+    margin-top:28px;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:22px;
+  }
+  .panel textarea{
+    width:100%;
+    min-height:130px;
+    resize:vertical;
+    background:transparent;
+    border:none;
+    outline:none;
+    color:var(--text);
+    font-size:15px;
+    line-height:1.6;
+    font-family:inherit;
+  }
+  .panel textarea::placeholder{color:#565c66;}
+  .panel-foot{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:14px;
+    padding-top:14px;
+    border-top:1px solid var(--line);
+  }
+  .char-count{font-family:var(--mono);font-size:12px;color:var(--sub);}
+
+  /* Interval slider */
+  .interval{margin-top:30px;}
+  .interval-head{
+    display:flex;
+    justify-content:space-between;
+    align-items:baseline;
+    margin-bottom:14px;
+  }
+  .interval-value{
+    font-family:var(--mono);
+    font-size:22px;
+    color:var(--accent);
+  }
+  .interval-value span{font-size:13px;color:var(--sub);margin-left:4px;}
+
+  input[type=range]{
+    -webkit-appearance:none;
+    width:100%;
+    height:4px;
+    border-radius:2px;
+    background:var(--line);
+    outline:none;
+  }
+  input[type=range]::-webkit-slider-thumb{
+    -webkit-appearance:none;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--accent);
+    border:3px solid #0e1013;
+    box-shadow:0 0 0 1px var(--accent-dim);
+    cursor:pointer;
+    margin-top:-7px;
+  }
+  input[type=range]::-moz-range-thumb{
+    width:18px;height:18px;
+    border-radius:50%;
+    background:var(--accent);
+    border:3px solid #0e1013;
+    box-shadow:0 0 0 1px var(--accent-dim);
+    cursor:pointer;
+  }
+  input[type=range]::-moz-range-track{
+    height:4px;border-radius:2px;background:var(--line);
+  }
+  .scale{
+    display:flex;
+    justify-content:space-between;
+    margin-top:8px;
+    font-family:var(--mono);
+    font-size:11px;
+    color:#565c66;
+  }
+
+  /* Send action */
+  .send-row{margin-top:34px;display:flex;flex-direction:column;gap:10px;}
+  button.send{
+    background:var(--accent);
+    color:#0e1013;
+    border:none;
+    border-radius:10px;
+    padding:14px;
+    font-size:15px;
+    font-weight:600;
+    cursor:pointer;
+    transition:background .2s ease, filter .15s ease, transform .1s ease;
+  }
+  button.send:hover{filter:brightness(1.08);}
+  button.send:active{transform:scale(.99);}
+  button.send.stop{
+    background:var(--danger);
+    color:#ffffff;
+  }
+  .status{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--sub);
+    min-height:16px;
+  }
+  .status.ok{color:#6ee7a8;}
+  .status.err{color:#ff8a8a;}
+
+  .note{
+    margin-top:40px;
+    font-size:12px;
+    color:#565c66;
+    line-height:1.6;
+    border-top:1px solid var(--line);
+    padding-top:16px;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">SIGNAL RELAY</div>
+    <h1>連続送信リレー</h1>
+  </header>
+
+  <div class="field-label">Webhook URL</div>
+  <div class="webhook-bar">
+    <input id="webhookUrl" type="text" placeholder="https://discord.com/api/webhooks/..." autocomplete="off">
+    <span class="dot" id="dot"></span>
+  </div>
+
+  <div class="panel">
+    <textarea id="message" placeholder="ここにメッセージを入力…"></textarea>
+    <div class="panel-foot">
+      <span class="char-count" id="charCount">0 / 2000</span>
+    </div>
+  </div>
+
+  <div class="interval">
+    <div class="interval-head">
+      <div class="field-label" style="margin:0;">連投間隔</div>
+      <div class="interval-value"><span id="intervalNum">1.0</span><span>秒間隔で連投</span></div>
+    </div>
+    <input type="range" id="interval" min="0.5" max="3" value="1.0" step="0.1">
+    <div class="scale"><span>0.5秒</span><span>1.75秒</span><span>3.0秒</span></div>
+  </div>
+
+  <div class="send-row">
+    <button class="send" id="sendBtn">連投開始</button>
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="note">
+    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。途中で「連投停止」を押すと停止します。
+  </div>
+</div>
+
+<script>
+  const urlInput = document.getElementById('webhookUrl');
+  const dot = document.getElementById('dot');
+  const msg = document.getElementById('message');
+  const charCount = document.getElementById('charCount');
+  const interval = document.getElementById('interval');
+  const intervalNum = document.getElementById('intervalNum');
+  const sendBtn = document.getElementById('sendBtn');
+  const status = document.getElementById('status');
+
+  let isSending = false;
+  let sendCount = 0;
+
+  function validWebhook(v){
+    return /^https:\/\/(discord|discordapp)\.com\/api\/webhooks\/\d+\/[\w-]+$/.test(v.trim());
+  }
+
+  urlInput.addEventListener('input', () => {
+    dot.classList.toggle('live', validWebhook(urlInput.value));
+  });
+
+  msg.addEventListener('input', () => {
+    charCount.textContent = `${msg.value.length} / 2000`;
+  });
+
+  interval.addEventListener('input', () => {
+    intervalNum.textContent = parseFloat(interval.value).toFixed(1);
+  });
+
+  sendBtn.addEventListener('click', () => {
+    if (isSending) {
+      stopSending();
+    } else {
+      startSending();
+    }
+  });
+
+  function startSending() {
+    const url = urlInput.value.trim();
+    const content = msg.value.trim();
+
+    if(!validWebhook(url)){
+      status.textContent = 'Webhook URLの形式が正しくありません。';
+      status.className = 'status err';
+      return;
+    }
+    if(!content){
+      status.textContent = 'メッセージを入力してください。';
+      status.className = 'status err';
+      return;
+    }
+
+    isSending = true;
+    sendCount = 0;
+    sendBtn.textContent = '連投停止';
+    sendBtn.classList.add('stop');
+    status.textContent = '連投中... (0回送信済み)';
+    status.className = 'status ok';
+
+    sendLoop();
+  }
+
+  function stopSending() {
+    isSending = false;
+    sendBtn.textContent = '連投開始';
+    sendBtn.classList.remove('stop');
+    status.textContent = `連投を停止しました。（合計 ${sendCount} 回送信）`;
+    status.className = 'status';
+  }
+
+  async function sendLoop() {
+    while (isSending) {
+      const url = urlInput.value.trim();
+      const content = msg.value.trim();
+
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {'Content-Type':'application/json'},
+          body: JSON.stringify({content})
+        });
+
+        if (res.ok || res.status === 204) {
+          sendCount++;
+          if (isSending) {
+            status.textContent = `連投中... (${sendCount}回送信済み)`;
+            status.className = 'status ok';
+          }
+        } else if (res.status === 429) {
+          status.textContent = `レート制限に達したため停止しました。（送信数: ${sendCount}回）`;
+          status.className = 'status err';
+          stopSending();
+          break;
+        } else {
+          status.textContent = `送信失敗 (status ${res.status})`;
+          status.className = 'status err';
+        }
+      } catch (e) {
+        status.textContent = '送信エラーが発生しました。';
+        status.className = 'status err';
+      }
+
+      if (!isSending) break;
+
+      // 設定した間隔（ミリ秒）待機
+      const waitMs = parseFloat(interval.value) * 1000;
+      await new Promise(resolve => setTimeout(resolve, waitMs));
+    }
+  }
+</script>
+</body>
+</html>
