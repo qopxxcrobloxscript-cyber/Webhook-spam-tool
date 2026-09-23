@@ -117,8 +117,62 @@
   }
   .char-count{font-family:var(--mono);font-size:12px;color:var(--sub);}
 
+  /* Toggle Switch Row */
+  .toggle-row{
+    margin-top:24px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:12px 16px;
+  }
+  .toggle-label{
+    font-size:13px;
+    color:var(--text);
+    font-weight:500;
+  }
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+  }
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  .slider-toggle {
+    position: absolute;
+    cursor: pointer;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: #2a2f38;
+    transition: .2s ease;
+    border-radius: 24px;
+  }
+  .slider-toggle:before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: var(--sub);
+    transition: .2s ease;
+    border-radius: 50%;
+  }
+  input:checked + .slider-toggle {
+    background-color: var(--accent-dim);
+  }
+  input:checked + .slider-toggle:before {
+    transform: translateX(20px);
+    background-color: #ffffff;
+  }
+
   /* Interval slider */
-  .interval{margin-top:30px;}
+  .interval{margin-top:20px;}
   .interval-head{
     display:flex;
     justify-content:space-between;
@@ -228,6 +282,15 @@
     </div>
   </div>
 
+  <!-- @everyone Toggle -->
+  <div class="toggle-row">
+    <span class="toggle-label">@everyone モード</span>
+    <label class="switch">
+      <input type="checkbox" id="everyoneToggle">
+      <span class="slider-toggle"></span>
+    </label>
+  </div>
+
   <div class="interval">
     <div class="interval-head">
       <div class="field-label" style="margin:0;">連投間隔</div>
@@ -243,7 +306,7 @@
   </div>
 
   <div class="note">
-    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。途中で「連投停止」を押すと停止します。
+    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。@everyoneモードをオンにするとメッセージの先頭にメンションを追加して送信します。
   </div>
 </div>
 
@@ -252,6 +315,7 @@
   const dot = document.getElementById('dot');
   const msg = document.getElementById('message');
   const charCount = document.getElementById('charCount');
+  const everyoneToggle = document.getElementById('everyoneToggle');
   const interval = document.getElementById('interval');
   const intervalNum = document.getElementById('intervalNum');
   const sendBtn = document.getElementById('sendBtn');
@@ -286,14 +350,14 @@
 
   function startSending() {
     const url = urlInput.value.trim();
-    const content = msg.value.trim();
+    const rawContent = msg.value.trim();
 
     if(!validWebhook(url)){
       status.textContent = 'Webhook URLの形式が正しくありません。';
       status.className = 'status err';
       return;
     }
-    if(!content){
+    if(!rawContent){
       status.textContent = 'メッセージを入力してください。';
       status.className = 'status err';
       return;
@@ -320,7 +384,11 @@
   async function sendLoop() {
     while (isSending) {
       const url = urlInput.value.trim();
-      const content = msg.value.trim();
+      let content = msg.value.trim();
+
+      if (everyoneToggle.checked) {
+        content = '@everyone ' + content;
+      }
 
       try {
         const res = await fetch(url, {
@@ -351,7 +419,6 @@
 
       if (!isSending) break;
 
-      // 設定した間隔（ミリ秒）待機
       const waitMs = parseFloat(interval.value) * 1000;
       await new Promise(resolve => setTimeout(resolve, waitMs));
     }
