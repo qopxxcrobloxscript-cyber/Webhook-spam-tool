@@ -14,6 +14,7 @@
     --accent:#7c8cff;
     --accent-dim:#4b52a8;
     --danger:#ff5c5c;
+    --warn:#ffb347;
     --mono:'JetBrains Mono','Courier New',monospace;
   }
   *{box-sizing:border-box;}
@@ -45,6 +46,23 @@
     font-weight:600;
     letter-spacing:-0.01em;
   }
+
+  /* Warning banner */
+  .warn-banner{
+    display:none;
+    align-items:center;
+    gap:10px;
+    background:#2a1f0e;
+    border:1px solid #4a3200;
+    border-radius:10px;
+    padding:12px 16px;
+    margin-bottom:20px;
+    font-size:13px;
+    color:var(--warn);
+    line-height:1.5;
+  }
+  .warn-banner.visible{display:flex;}
+  .warn-banner .warn-icon{font-size:18px;flex-shrink:0;}
 
   /* Webhook bar */
   .field-label{
@@ -269,6 +287,12 @@
     <h1>連続送信リレー</h1>
   </header>
 
+  <!-- 送信中の離脱警告バナー -->
+  <div class="warn-banner" id="warnBanner">
+    <span class="warn-icon">⚠️</span>
+    <span>連投中です。このページを閉じたり移動すると送信が止まります。送信を続けるにはこのタブを開いたままにしてください。</span>
+  </div>
+
   <div class="field-label">Webhook URL</div>
   <div class="webhook-bar">
     <input id="webhookUrl" type="text" placeholder="https://discord.com/api/webhooks/..." autocomplete="off">
@@ -306,7 +330,8 @@
   </div>
 
   <div class="note">
-    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。@everyoneモードをオンにするとメッセージの先頭にメンションを追加して送信します。
+    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。@everyoneモードをオンにするとメッセージの先頭にメンションを追加して送信します。<br><br>
+    ⚠️ ブラウザの仕様上、このページから離れると送信は停止します。連投中はタブを閉じないでください。
   </div>
 </div>
 
@@ -320,9 +345,11 @@
   const intervalNum = document.getElementById('intervalNum');
   const sendBtn = document.getElementById('sendBtn');
   const status = document.getElementById('status');
+  const warnBanner = document.getElementById('warnBanner');
 
   let isSending = false;
   let sendCount = 0;
+  const originalTitle = document.title;
 
   function validWebhook(v){
     return /^https:\/\/(discord|discordapp)\.com\/api\/webhooks\/\d+\/[\w-]+$/.test(v.trim());
@@ -339,6 +366,42 @@
   interval.addEventListener('input', () => {
     intervalNum.textContent = parseFloat(interval.value).toFixed(1);
   });
+
+  // ページ離脱前の警告
+  window.addEventListener('beforeunload', (e) => {
+    if (isSending) {
+      e.preventDefault();
+      // Chrome では returnValue のセットが必要
+      e.returnValue = '連投中です。ページを離れると送信が停止します。本当に離れますか？';
+      return e.returnValue;
+    }
+  });
+
+  // visibilitychange: タブが非表示になったときに通知
+  document.addEventListener('visibilitychange', () => {
+    if (isSending && document.hidden) {
+      // タブが隠れても JS は短時間は動き続けるが、
+      // ユーザーに気づかせるためにフラグを立てておく（復帰時に表示）
+    } else if (isSending && !document.hidden) {
+      // タブに戻ってきたとき — 送信が継続中であることを再確認させる
+      status.textContent = `連投中... (${sendCount}回送信済み) ← タブを離れないでください`;
+      status.className = 'status ok';
+    }
+  });
+
+  function setSendingUI(active) {
+    isSending = active;
+    warnBanner.classList.toggle('visible', active);
+    if (active) {
+      sendBtn.textContent = '連投停止';
+      sendBtn.classList.add('stop');
+      document.title = '🔴 連投中 — Signal Relay';
+    } else {
+      sendBtn.textContent = '連投開始';
+      sendBtn.classList.remove('stop');
+      document.title = originalTitle;
+    }
+  }
 
   sendBtn.addEventListener('click', () => {
     if (isSending) {
@@ -363,10 +426,8 @@
       return;
     }
 
-    isSending = true;
     sendCount = 0;
-    sendBtn.textContent = '連投停止';
-    sendBtn.classList.add('stop');
+    setSendingUI(true);
     status.textContent = '連投中... (0回送信済み)';
     status.className = 'status ok';
 
@@ -374,9 +435,7 @@
   }
 
   function stopSending() {
-    isSending = false;
-    sendBtn.textContent = '連投開始';
-    sendBtn.classList.remove('stop');
+    setSendingUI(false);
     status.textContent = `連投を停止しました。（合計 ${sendCount} 回送信）`;
     status.className = 'status';
   }
