@@ -47,7 +47,6 @@
     letter-spacing:-0.01em;
   }
 
-  /* Warning banner */
   .warn-banner{
     display:none;
     align-items:center;
@@ -64,7 +63,6 @@
   .warn-banner.visible{display:flex;}
   .warn-banner .warn-icon{font-size:18px;flex-shrink:0;}
 
-  /* Webhook bar */
   .field-label{
     font-size:13px;
     color:var(--sub);
@@ -79,9 +77,7 @@
     padding:4px 4px 4px 16px;
     transition:border-color .15s ease;
   }
-  .webhook-bar:focus-within{
-    border-color:var(--accent-dim);
-  }
+  .webhook-bar:focus-within{border-color:var(--accent-dim);}
   .webhook-bar input{
     flex:1;
     background:transparent;
@@ -99,12 +95,8 @@
     flex-shrink:0;
     transition:background .2s ease, box-shadow .2s ease;
   }
-  .dot.live{
-    background:#6ee7a8;
-    box-shadow:0 0 8px #6ee7a888;
-  }
+  .dot.live{background:#6ee7a8;box-shadow:0 0 8px #6ee7a888;}
 
-  /* Message panel */
   .panel{
     margin-top:28px;
     background:var(--panel);
@@ -135,9 +127,8 @@
   }
   .char-count{font-family:var(--mono);font-size:12px;color:var(--sub);}
 
-  /* Toggle Switch Row */
   .toggle-row{
-    margin-top:24px;
+    margin-top:16px;
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -146,137 +137,81 @@
     border-radius:12px;
     padding:12px 16px;
   }
-  .toggle-label{
-    font-size:13px;
-    color:var(--text);
-    font-weight:500;
-  }
-  .switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 24px;
-  }
-  .switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
-  .slider-toggle {
-    position: absolute;
-    cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #2a2f38;
-    transition: .2s ease;
-    border-radius: 24px;
-  }
-  .slider-toggle:before {
-    position: absolute;
-    content: "";
-    height: 18px;
-    width: 18px;
-    left: 3px;
-    bottom: 3px;
-    background-color: var(--sub);
-    transition: .2s ease;
-    border-radius: 50%;
-  }
-  input:checked + .slider-toggle {
-    background-color: var(--accent-dim);
-  }
-  input:checked + .slider-toggle:before {
-    transform: translateX(20px);
-    background-color: #ffffff;
-  }
+  .toggle-label{font-size:13px;color:var(--text);font-weight:500;}
+  .toggle-sub{font-size:11px;color:var(--sub);margin-top:2px;}
 
-  /* Interval slider */
+  .switch{position:relative;display:inline-block;width:44px;height:24px;}
+  .switch input{opacity:0;width:0;height:0;}
+  .slider-toggle{
+    position:absolute;cursor:pointer;
+    top:0;left:0;right:0;bottom:0;
+    background-color:#2a2f38;
+    transition:.2s ease;border-radius:24px;
+  }
+  .slider-toggle:before{
+    position:absolute;content:"";
+    height:18px;width:18px;left:3px;bottom:3px;
+    background-color:var(--sub);
+    transition:.2s ease;border-radius:50%;
+  }
+  input:checked + .slider-toggle{background-color:var(--accent-dim);}
+  input:checked + .slider-toggle:before{transform:translateX(20px);background-color:#fff;}
+
+  /* GIF preview */
+  .gif-preview{
+    display:none;
+    margin-top:10px;
+    border-radius:10px;
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .gif-preview.visible{display:block;}
+  .gif-preview img{width:100%;display:block;}
+
   .interval{margin-top:20px;}
   .interval-head{
-    display:flex;
-    justify-content:space-between;
-    align-items:baseline;
-    margin-bottom:14px;
+    display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;
   }
-  .interval-value{
-    font-family:var(--mono);
-    font-size:22px;
-    color:var(--accent);
-  }
+  .interval-value{font-family:var(--mono);font-size:22px;color:var(--accent);}
   .interval-value span{font-size:13px;color:var(--sub);margin-left:4px;}
 
   input[type=range]{
-    -webkit-appearance:none;
-    width:100%;
-    height:4px;
-    border-radius:2px;
-    background:var(--line);
-    outline:none;
+    -webkit-appearance:none;width:100%;height:4px;
+    border-radius:2px;background:var(--line);outline:none;
   }
   input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;
-    width:18px;height:18px;
-    border-radius:50%;
-    background:var(--accent);
-    border:3px solid #0e1013;
-    box-shadow:0 0 0 1px var(--accent-dim);
-    cursor:pointer;
-    margin-top:-7px;
+    -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+    background:var(--accent);border:3px solid #0e1013;
+    box-shadow:0 0 0 1px var(--accent-dim);cursor:pointer;margin-top:-7px;
   }
   input[type=range]::-moz-range-thumb{
-    width:18px;height:18px;
-    border-radius:50%;
-    background:var(--accent);
-    border:3px solid #0e1013;
-    box-shadow:0 0 0 1px var(--accent-dim);
-    cursor:pointer;
+    width:18px;height:18px;border-radius:50%;
+    background:var(--accent);border:3px solid #0e1013;
+    box-shadow:0 0 0 1px var(--accent-dim);cursor:pointer;
   }
-  input[type=range]::-moz-range-track{
-    height:4px;border-radius:2px;background:var(--line);
-  }
+  input[type=range]::-moz-range-track{height:4px;border-radius:2px;background:var(--line);}
   .scale{
-    display:flex;
-    justify-content:space-between;
-    margin-top:8px;
-    font-family:var(--mono);
-    font-size:11px;
-    color:#565c66;
+    display:flex;justify-content:space-between;margin-top:8px;
+    font-family:var(--mono);font-size:11px;color:#565c66;
   }
 
-  /* Send action */
   .send-row{margin-top:34px;display:flex;flex-direction:column;gap:10px;}
   button.send{
-    background:var(--accent);
-    color:#0e1013;
-    border:none;
-    border-radius:10px;
-    padding:14px;
-    font-size:15px;
-    font-weight:600;
-    cursor:pointer;
-    transition:background .2s ease, filter .15s ease, transform .1s ease;
+    background:var(--accent);color:#0e1013;border:none;border-radius:10px;
+    padding:14px;font-size:15px;font-weight:600;cursor:pointer;
+    transition:background .2s ease,filter .15s ease,transform .1s ease;
   }
   button.send:hover{filter:brightness(1.08);}
   button.send:active{transform:scale(.99);}
-  button.send.stop{
-    background:var(--danger);
-    color:#ffffff;
-  }
-  .status{
-    font-family:var(--mono);
-    font-size:12px;
-    color:var(--sub);
-    min-height:16px;
-  }
+  button.send.stop{background:var(--danger);color:#fff;}
+
+  .status{font-family:var(--mono);font-size:12px;color:var(--sub);min-height:16px;}
   .status.ok{color:#6ee7a8;}
   .status.err{color:#ff8a8a;}
 
   .note{
-    margin-top:40px;
-    font-size:12px;
-    color:#565c66;
-    line-height:1.6;
-    border-top:1px solid var(--line);
-    padding-top:16px;
+    margin-top:40px;font-size:12px;color:#565c66;line-height:1.6;
+    border-top:1px solid var(--line);padding-top:16px;
   }
 </style>
 </head>
@@ -287,7 +222,6 @@
     <h1>連続送信リレー</h1>
   </header>
 
-  <!-- 送信中の離脱警告バナー -->
   <div class="warn-banner" id="warnBanner">
     <span class="warn-icon">⚠️</span>
     <span>連投中です。このページを閉じたり移動すると送信が止まります。送信を続けるにはこのタブを開いたままにしてください。</span>
@@ -308,14 +242,33 @@
 
   <!-- @everyone Toggle -->
   <div class="toggle-row">
-    <span class="toggle-label">@everyone モード</span>
+    <div>
+      <div class="toggle-label">@everyone モード</div>
+    </div>
     <label class="switch">
       <input type="checkbox" id="everyoneToggle">
       <span class="slider-toggle"></span>
     </label>
   </div>
 
-  <div class="interval">
+  <!-- GIF Toggle -->
+  <div class="toggle-row">
+    <div>
+      <div class="toggle-label">GIF 送信モード</div>
+      <div class="toggle-sub">下北沢ナメナメ祭り GIF を一緒に送信</div>
+    </div>
+    <label class="switch">
+      <input type="checkbox" id="gifToggle">
+      <span class="slider-toggle"></span>
+    </label>
+  </div>
+
+  <!-- GIF preview -->
+  <div class="gif-preview" id="gifPreview">
+    <img src="https://media1.tenor.com/m/GlxDv0ok5wQAAAAC/inmu-kmr.gif" alt="下北沢ナメナメ祭り">
+  </div>
+
+  <div class="interval" style="margin-top:24px;">
     <div class="interval-head">
       <div class="field-label" style="margin:0;">連投間隔</div>
       <div class="interval-value"><span id="intervalNum">1.0</span><span>秒間隔で連投</span></div>
@@ -330,22 +283,26 @@
   </div>
 
   <div class="note">
-    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。@everyoneモードをオンにするとメッセージの先頭にメンションを追加して送信します。<br><br>
+    スライダーで設定した間隔（0.5〜3.0秒）ごとにメッセージを繰り返し送信します。GIF送信モードをオンにすると「下北沢ナメナメ祭り」GIFをEmbedとして添付します。<br><br>
     ⚠️ ブラウザの仕様上、このページから離れると送信は停止します。連投中はタブを閉じないでください。
   </div>
 </div>
 
 <script>
-  const urlInput = document.getElementById('webhookUrl');
-  const dot = document.getElementById('dot');
-  const msg = document.getElementById('message');
-  const charCount = document.getElementById('charCount');
+  const GIF_URL = 'https://media1.tenor.com/m/GlxDv0ok5wQAAAAC/inmu-kmr.gif';
+
+  const urlInput    = document.getElementById('webhookUrl');
+  const dot         = document.getElementById('dot');
+  const msg         = document.getElementById('message');
+  const charCount   = document.getElementById('charCount');
   const everyoneToggle = document.getElementById('everyoneToggle');
-  const interval = document.getElementById('interval');
+  const gifToggle   = document.getElementById('gifToggle');
+  const gifPreview  = document.getElementById('gifPreview');
+  const intervalEl  = document.getElementById('interval');
   const intervalNum = document.getElementById('intervalNum');
-  const sendBtn = document.getElementById('sendBtn');
-  const status = document.getElementById('status');
-  const warnBanner = document.getElementById('warnBanner');
+  const sendBtn     = document.getElementById('sendBtn');
+  const status      = document.getElementById('status');
+  const warnBanner  = document.getElementById('warnBanner');
 
   let isSending = false;
   let sendCount = 0;
@@ -363,27 +320,26 @@
     charCount.textContent = `${msg.value.length} / 2000`;
   });
 
-  interval.addEventListener('input', () => {
-    intervalNum.textContent = parseFloat(interval.value).toFixed(1);
+  intervalEl.addEventListener('input', () => {
+    intervalNum.textContent = parseFloat(intervalEl.value).toFixed(1);
+  });
+
+  // GIFトグルでプレビュー表示
+  gifToggle.addEventListener('change', () => {
+    gifPreview.classList.toggle('visible', gifToggle.checked);
   });
 
   // ページ離脱前の警告
   window.addEventListener('beforeunload', (e) => {
     if (isSending) {
       e.preventDefault();
-      // Chrome では returnValue のセットが必要
       e.returnValue = '連投中です。ページを離れると送信が停止します。本当に離れますか？';
       return e.returnValue;
     }
   });
 
-  // visibilitychange: タブが非表示になったときに通知
   document.addEventListener('visibilitychange', () => {
-    if (isSending && document.hidden) {
-      // タブが隠れても JS は短時間は動き続けるが、
-      // ユーザーに気づかせるためにフラグを立てておく（復帰時に表示）
-    } else if (isSending && !document.hidden) {
-      // タブに戻ってきたとき — 送信が継続中であることを再確認させる
+    if (isSending && !document.hidden) {
       status.textContent = `連投中... (${sendCount}回送信済み) ← タブを離れないでください`;
       status.className = 'status ok';
     }
@@ -404,24 +360,21 @@
   }
 
   sendBtn.addEventListener('click', () => {
-    if (isSending) {
-      stopSending();
-    } else {
-      startSending();
-    }
+    if (isSending) stopSending();
+    else startSending();
   });
 
   function startSending() {
     const url = urlInput.value.trim();
     const rawContent = msg.value.trim();
 
-    if(!validWebhook(url)){
+    if (!validWebhook(url)) {
       status.textContent = 'Webhook URLの形式が正しくありません。';
       status.className = 'status err';
       return;
     }
-    if(!rawContent){
-      status.textContent = 'メッセージを入力してください。';
+    if (!rawContent && !gifToggle.checked) {
+      status.textContent = 'メッセージを入力するか、GIFモードをオンにしてください。';
       status.className = 'status err';
       return;
     }
@@ -430,7 +383,6 @@
     setSendingUI(true);
     status.textContent = '連投中... (0回送信済み)';
     status.className = 'status ok';
-
     sendLoop();
   }
 
@@ -449,11 +401,27 @@
         content = '@everyone ' + content;
       }
 
+      // ペイロード構築
+      let payload;
+      if (gifToggle.checked) {
+        // GIFモードON: embedsのimage.urlにGIFを埋め込む
+        payload = {
+          content: content || undefined,
+          embeds: [{
+            image: { url: GIF_URL }
+          }]
+        };
+        // content が空文字ならキー削除
+        if (!payload.content) delete payload.content;
+      } else {
+        payload = { content };
+      }
+
       try {
         const res = await fetch(url, {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
-          body: JSON.stringify({content})
+          body: JSON.stringify(payload)
         });
 
         if (res.ok || res.status === 204) {
@@ -478,7 +446,7 @@
 
       if (!isSending) break;
 
-      const waitMs = parseFloat(interval.value) * 1000;
+      const waitMs = parseFloat(intervalEl.value) * 1000;
       await new Promise(resolve => setTimeout(resolve, waitMs));
     }
   }
